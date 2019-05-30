@@ -4,6 +4,15 @@ Você pode utilizar este procedimento com freepbx ou outro sistema mas tome cuid
 
 Se você executar este procedimento por completo você terá um asterisk rodando com uma fila de teste e você pode criar um tronco para receber e fazer chamadas.
 
+
+# Screenshots
+![Abandonadas](https://github.com/wearebrdsoft/AsteriskSimpleCCReport/raw/master/common/screenshot/abandonadas.png)
+
+![TMF](https://github.com/wearebrdsoft/AsteriskSimpleCCReport/raw/master/common/screenshot/tmf.png)
+
+![Geral](https://github.com/wearebrdsoft/AsteriskSimpleCCReport/raw/master/common/screenshot/relatorio.png)
+
+
 # TODO
 
 	* Detalhes de configuracao para FreePBX
