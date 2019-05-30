@@ -22,10 +22,10 @@ apt-get install  asterisk apache2 php-mysql php-gd php-cli php-common libapache2
 ## Clonando o projeto 
 ```
 cd /usr/src/
-git clone https://mtesliuk@bitbucket.org/brdsoft/asteriskcallcenterreport.git
+git clone https://github.com/wearebrdsoft/AsteriskSimpleCCReport.git 
 rm /var/www/html/index.html
-mv asteriskcallcenterreport/* /var/www/html/
-mv asteriskcallcenterreport/.* /var/www/html/
+mv AsteriskSimpleCCReport/* /var/www/html/
+mv AsteriskSimpleCCReport/.* /var/www/html/
 ```
 
 ## Instalando o Composer
