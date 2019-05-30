@@ -1,0 +1,152 @@
+ 
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="TheProject" default="build" basedir=".">
+
+    <!-- Altere estas propriedades adequando-as ao seu projeto -->
+    <property name="application.library" value="${project.basedir}/library"/>
+    <property name="application.tests" value="${project.basedir}/tests"/>
+    <property name="application.builddir" value="${project.basedir}/build"/>
+
+    <target name="build"
+        depends="prepare,lint,phploc,pdepend,phpmd,phpcs,phpcpd,phpdoc,phpunit,phpcb"/>
+
+    <target name="clean" description="Limpa os diretórios de artefatos">
+        <delete dir="${application.builddir}/api"/>
+        <delete dir="${application.builddir}/code-browser"/>
+        <delete dir="${application.builddir}/coverage"/>
+        <delete dir="${application.builddir}/logs"/>
+        <delete dir="${application.builddir}/pdepend"/>
+    </target>
+
+    <target name="prepare" depends="clean" description="Cria os diretórios de artefatos">
+        <mkdir dir="${application.builddir}/api"/>
+        <mkdir dir="${application.builddir}/code-browser"/>
+        <mkdir dir="${application.builddir}/coverage"/>
+        <mkdir dir="${application.builddir}/logs"/>
+        <mkdir dir="${application.builddir}/pdepend"/>
+    </target>
+
+    <target name="lint">
+        <phplint>
+            <fileset dir="${application.library}">
+                <include name="**/*.php" />
+            </fileset>
+            <fileset dir="${application.tests}">
+                <include name="**/*.php" />
+            </fileset>
+        </phplint>
+    </target>
+
+    <target name="phploc" description="Mede o tamanho da aplicação">
+        <exec executable="phploc">
+            <arg value="--log-csv" />
+            <arg value="${application.builddir}/logs/phploc.csv" />
+            <arg path="${application.library}" />
+            </exec>
+    </target>
+
+    <target name="pdepend" description="Calcula métricas de software">
+        <phpdepend>
+            <fileset dir="${application.library}">
+                <include name="**/*.php" />
+            </fileset>
+            <logger type="jdepend-xml"
+                outfile="${application.builddir}/logs/jdepend.xml"/>
+            <logger type="jdepend-chart"
+                outfile="${application.builddir}/pdepend/dependencies.svg"/>
+            <logger type="overview-pyramid"
+                outfile="${application.builddir}/pdepend/overview-pyramid.svg"/>
+            <analyzer type="coderank-mode" value="method"/>
+        </phpdepend>
+    </target>
+
+    <target name="phpmd" description="Detecção de bagunça de código">
+        <phpmd rulesets="${application.builddir}/phpmd.xml">
+            <fileset dir="${application.library}">
+                <include name="**/*.php" />
+            </fileset>
+            <formatter type="xml" outfile="${application.builddir}/logs/pmd.xml"/>
+        </phpmd>
+    </target>
+
+   <target name="phpcs" description="Testa o padrão de codificação">
+       <phpcodesniffer
+            standard="Symfony2"
+            showSniffs="true"
+            showWarnings="true">
+            <fileset dir="${application.library}">
+                <include name="**/*.php"/>
+            </fileset>
+            <formatter type="default" usefile="false"/>
+            <formatter type="checkstyle" outfile="${application.builddir}/logs/checkstyle.xml"/>
+        </phpcodesniffer>
+   </target>
+
+    <target name="phpcpd" description="Testa duplicação de código">
+        <phpcpd>
+            <fileset dir="${application.library}">
+                <include name="**/*.php" />
+            </fileset>
+            <formatter type="pmd" outfile="${application.builddir}/logs/pmd-cpd.xml"/>
+        </phpcpd>
+    </target>
+
+    <target name="phpdoc" description="Documentação de API">
+        <phpdoc title="Leviathan API Documentation"
+            destdir="build/api"
+            sourcecode="false"
+            output="HTML:Smarty:PHP">
+            <fileset dir="${application.library}">
+                <include name="**/*.php" />
+            </fileset>
+        </phpdoc>
+    </target>
+
+    <target name="phpunit" description="Testes Unitários">
+        <php expression="ini_set('memory_limit', -1);"/>
+        <php expression="extension_loaded('xdebug');" returnProperty="xdebug"/>
+        <if><istrue value="${xdebug}"/><then>
+            <coverage-setup database="${application.builddir}/coverage/coverage.db">
+                <fileset dir="${application.tests}" id="tests">
+                    <include name="**/*Test.php"/>
+                </fileset>
+            </coverage-setup>
+            <phpunit codecoverage="true" bootstrap="${application.tests}/bootstrap.php">
+                <batchtest>
+                    <fileset dir="${application.tests}">
+                        <include name="**/*Test.php"/>
+                    </fileset>
+                </batchtest>
+                <formatter type="clover" todir="${application.builddir}/logs" outfile="clover.xml"/>
+                <formatter type="xml" todir="${application.builddir}/logs" outfile="junit.xml"/>
+            </phpunit>
+            <coverage-report outfile="${application.builddir}/coverage/coverage.xml">
+                <report todir="${application.builddir}/coverage"/>
+            </coverage-report>
+        </then><else>
+            <phpunit codecoverage="false" bootstrap="${application.tests}/bootstrap.php">
+                <batchtest>
+                    <fileset dir="${application.tests}">
+                        <include name="**/*Test.php"/>
+                    </fileset>
+                </batchtest>
+                <formatter type="clover" todir="${application.builddir}/logs" outfile="clover.xml"/>
+                <formatter type="xml" todir="${application.builddir}/logs" outfile="junit.xml"/>
+            </phpunit>
+        </else></if>
+        <phpunitreport infile="${application.tests}/phpunit.xml"
+            todir="${application.builddir}/logs"/>
+    </target>
+
+    <target name="phpcb" description="Cria a navegação de código">
+        <exec executable="phpcb">
+            <arg value="--log" />
+            <arg path="${application.builddir}/logs" />
+            <arg value="--source" />
+            <arg path="${application.library}" />
+            <arg value="--output" />
+            <arg path="${application.builddir}/code-browser" />
+        </exec>
+    </target>
+</project>
