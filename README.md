@@ -23,8 +23,22 @@ Se você executar este procedimento por completo você terá um asterisk rodando
 
 
 # Instalação
+adicionar repositório do php
 ```
-apt-get install  asterisk apache2 php-mysql php-gd php-cli php-common libapache2-mod-php git zip php-zip php-xml mysql-server php-mbstring vim unixodbc checkinstall cmake build-essential libssl1.0-dev libmariadb-dev unixodbc-dev curl python-gevent apache2-mod-wsgi
+apt update
+apt install apt-transport-https ca-certificates curl software-properties-common
+```
+```
+curl -fsSL https://packages.sury.org/php/apt.gpg | sudo apt-key add -
+```
+``` 
+add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -cs) main"
+```
+```
+apt update
+```
+```
+apt-get install asterisk apache2 php-mysql php-gd php-cli php-common libapache2-mod-php git zip php-zip php-xml mysql-server php-mbstring vim unixodbc checkinstall cmake build-essential libssl-dev libmariadbd-dev unixodbc-dev curl python-gevent libapache2-mod-wsgi
 ```
 
 
@@ -65,7 +79,7 @@ php /root/composer.phar update
 ## Configurando o apache
 ```
 cd /var/www/html/
-cp common/apache/000-default /etc/apache2/sites-available/
+cp common/apache/000-default.conf /etc/apache2/sites-available/
 a2enmod rewrite
 systemctl restart apache2
 chown -R www-data.www-data /var/www/html/storage
@@ -81,7 +95,11 @@ mysql -e "create database asterisk"
  mysql> grant all on asterisk.* to asterisk@'localhost' identified by 'brdsoftrocks';
  mysql > flush privileges
 ```
-
+*Criando arquivo .env para configuração de variáveis globais
+```
+cd /var/www/html/
+cp .env-example .env
+```
 *Edite o arquivo .env em /var/www/html e defina os valores abaixo*
 
 ```
