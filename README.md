@@ -23,8 +23,22 @@ Se você executar este procedimento por completo você terá um asterisk rodando
 
 
 # Instalação
+adicionar repositório do php
 ```
-apt-get install  asterisk apache2 php-mysql php-gd php-cli php-common libapache2-mod-php git zip php-zip php-xml mysql-server php-mbstring vim unixodbc checkinstall cmake build-essential libssl1.0-dev libmariadb-dev unixodbc-dev curl python-gevent apache2-mod-wsgi
+apt update
+apt install apt-transport-https ca-certificates curl software-properties-common
+```
+```
+curl -fsSL https://packages.sury.org/php/apt.gpg | sudo apt-key add -
+```
+``` 
+add-apt-repository "deb https://packages.sury.org/php/ $(lsb_release -cs) main"
+```
+```
+apt update
+```
+```
+apt-get install  asterisk apache2 php-mysql php-gd php-cli php-common libapache2-mod-php git zip php-zip php-xml mysql-server php-mbstring vim unixodbc checkinstall cmake build-essential libssl-dev libmariadbd-dev unixodbc-dev curl python-gevent libapache2-mod-wsgi
 ```
 
 
